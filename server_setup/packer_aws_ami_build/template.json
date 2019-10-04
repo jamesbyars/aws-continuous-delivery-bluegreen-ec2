@@ -1,0 +1,25 @@
+{
+    "variables": {
+      "aws_access_key": "",
+      "aws_secret_key": "",
+      "amazon_linux_2_ami_id": "ami-0b69ea66ff7391e80"
+    },
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "region": "us-east-1",
+        "source_ami": "{{user `amazon_linux_2_ami_id`}}",
+        "instance_type": "m4.large",
+        "ssh_username": "ec2-user",
+        "ami_name": "AWS - CD Prod AMI - {{timestamp}}"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "shell",
+        "script": "/home/install_necessary_shit.sh"
+      }
+    ]
+  }
