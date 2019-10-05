@@ -19,7 +19,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                sh 'aws s3 ls'
+                // sh 'aws s3 ls'
             }
         }
         stage('Provision new EC2 Instance') {
