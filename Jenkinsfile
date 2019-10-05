@@ -8,7 +8,7 @@ pipeline {
 
         choice(name: 'EC2_KEY_NAME', choices: ['TestCDKP'], description: 'Pick something')
 
-        choice(name: 'EC2_INSTANCE_SECURITY_GROUP', choices: ['sg-01401b093a720bc33'], description: 'Pick something')
+        choice(name: 'EC2_INSTANCE_SECURITY_GROUP', choices: ['sg-0cc3ddd38bf36da58'], description: 'Pick something')
         
         choice(name: 'EC2_INSTANCE_SUBNET_ID', choices: ['subnet-0275526f11c557ad3'], description: 'Pick something')
 
