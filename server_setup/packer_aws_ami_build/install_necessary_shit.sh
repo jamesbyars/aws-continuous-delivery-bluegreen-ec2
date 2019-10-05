@@ -3,3 +3,4 @@
 
 
 sudo yum -y update
+sudo touch /home/updated.txt

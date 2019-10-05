@@ -11,7 +11,7 @@
         "secret_key": "{{user `aws_secret_key`}}",
         "region": "us-east-1",
         "source_ami": "{{user `amazon_linux_2_ami_id`}}",
-        "instance_type": "m4.large",
+        "instance_type": "t2.micro",
         "ssh_username": "ec2-user",
         "ami_name": "AWS - CD Prod AMI - {{timestamp}}"
       }
