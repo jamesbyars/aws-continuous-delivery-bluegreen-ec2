@@ -31,11 +31,13 @@ pipeline {
             }
         }
         stage('Wait for instance to come online') {
-            sh """ 
-                while state=aws ec2 describe-instances --instance-ids $instance_id --output text --query 'Reservations[*].Instances[*].State.Name'; test "$state" = "pending"; do
-                    sleep 1; echo -n '.'
-                done; echo " $state"
-            """
+            steps {
+                sh """ 
+                    while state=aws ec2 describe-instances --instance-ids $instance_id --output text --query 'Reservations[*].Instances[*].State.Name'; test "$state" = "pending"; do
+                        sleep 1; echo -n '.'
+                    done; echo " $state"
+                """
+            }
         }
         stage('Test') {
             steps {
