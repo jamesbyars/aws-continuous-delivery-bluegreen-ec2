@@ -29,14 +29,21 @@ pipeline {
                     instance_id=`aws ec2 run-instances --associate-public-ip-address --region us-east-1 --image-id ${AMI_ID} --count 1 --instance-type ${EC2_INSTANCE_SIZE} --key-name ${EC2_KEY_NAME} --security-group-ids ${EC2_INSTANCE_SECURITY_GROUP} --subnet-id ${EC2_INSTANCE_SUBNET_ID} --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${EC2_INSTANCE_NAME}}]'  --output text --query 'Instances[*].InstanceId'` 
 
                     echo "\$instance_id" > instance_id.txt
-                    
-                    echo "entering describe instances"
-                    
-                    while state=`aws ec2 describe-instances --instance-ids \$instance_id --output text --query 'Reservations[*].Instances[*].State.Name'`; test "\$state" = "pending"; do
+                    """
+            }
+        }
+        stage('Wait for EC2 to Be Running') {
+            steps {
+                script {
+                    instance_id = readFile('instance_id.txt').trim()
+                }
+                echo "entering describe instances"
+                sh """ 
+                    while state=`aws ec2 describe-instances --instance-ids ${instance_id} --output text --query 'Reservations[*].Instances[*].State.Name'`; test "\$state" = "pending"; do
                       sleep 1; echo -n '.'
                     done; echo "\$state"
                     
-                    ip_address=`aws ec2 describe-instances --instance-ids \$instance_id --output text --query 'Reservations[*].Instances[*].PublicIpAddress'`
+                    ip_address=`aws ec2 describe-instances --instance-ids ${instance_id} --output text --query 'Reservations[*].Instances[*].PublicIpAddress'`
                     echo "\$ip_address" > ip_address.txt
 
                     """
@@ -48,9 +55,11 @@ pipeline {
                 
                 script {
                     instance_id = readFile('instance_id.txt').trim()
+                    ip_address = readFile('ip_address.txt').trim()
                 }
                 
                 echo "${instance_id}"
+                echo "${ip_address}"
             }
         }
         stage('Deploy') {
