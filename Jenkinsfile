@@ -42,6 +42,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
+                sh 'echo "\$instance_id"'
             }
         }
         stage('Deploy') {
