@@ -51,14 +51,28 @@ pipeline {
                     """
             }
         }
-        stage('Test') {
+        stage('Smoke test instance configs') {
             steps {
-                echo 'Testing..'
-                
                 script {
                     instance_id = readFile('instance_id.txt').trim()
                     ip_address = readFile('ip_address.txt').trim()
                 }
+
+                // Port 22 should be open
+                sh "nc -z -w30 ${ip_address} 22"
+                echo "Result from nc (should be 0) ${$?}"
+
+                // Port 8080 should be open
+                sh "nc -z -w30 ${ip_address} 8080"
+                echo "Result from nc (should be 0) ${$?}"
+                
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+                
+                
                 
                 echo "${instance_id}"
                 echo "${ip_address}"
