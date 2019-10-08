@@ -13,6 +13,8 @@ pipeline {
         choice(name: 'EC2_INSTANCE_SUBNET_ID', choices: ['subnet-0275526f11c557ad3'], description: 'Pick something')
 
         text(name: 'EC2_INSTANCE_NAME', defaultValue: '', description: 'Name of the EC2 Instance')
+
+        text(name: 'INSTANCE_ID', defaultValue: 'def', description: '')
     }
 
     stages {
@@ -26,7 +28,7 @@ pipeline {
             steps {
                 instance_id = sh "aws ec2 run-instances --associate-public-ip-address --region us-east-1 --image-id ${AMI_ID} --count 1 --instance-type ${EC2_INSTANCE_SIZE} --key-name ${EC2_KEY_NAME} --security-group-ids ${EC2_INSTANCE_SECURITY_GROUP} --subnet-id ${EC2_INSTANCE_SUBNET_ID} --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${EC2_INSTANCE_NAME}}]'  --output text --query 'Instances[*].InstanceId'"
 
-                env.instance_id = instance_id
+                INSTANCE_ID = instance_id
 
 
 
@@ -46,7 +48,7 @@ pipeline {
         stage("Wait for EC2 Instance to Come Available") {
             steps {
                 sh """ 
-                    echo "$env.instance_id"
+                    echo "${INSTANCE_ID}"
                     
                     echo "entering describe instances"
                     
