@@ -24,25 +24,45 @@ pipeline {
         }
         stage('Provision new EC2 Instance') {
             steps {
-                sh """ 
-                    instance_id=`aws ec2 run-instances --associate-public-ip-address --region us-east-1 --image-id ${AMI_ID} --count 1 --instance-type ${EC2_INSTANCE_SIZE} --key-name ${EC2_KEY_NAME} --security-group-ids ${EC2_INSTANCE_SECURITY_GROUP} --subnet-id ${EC2_INSTANCE_SUBNET_ID} --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${EC2_INSTANCE_NAME}}]'  --output text --query 'Instances[*].InstanceId'` 
+                instance_id = sh "aws ec2 run-instances --associate-public-ip-address --region us-east-1 --image-id ${AMI_ID} --count 1 --instance-type ${EC2_INSTANCE_SIZE} --key-name ${EC2_KEY_NAME} --security-group-ids ${EC2_INSTANCE_SECURITY_GROUP} --subnet-id ${EC2_INSTANCE_SUBNET_ID} --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${EC2_INSTANCE_NAME}}]'  --output text --query 'Instances[*].InstanceId'"
 
-                    echo "\$instance_id"
+                env.instance_id = instance_id
+
+
+
+                // sh """ 
+                //     // echo "\$instance_id"
+                    
+                //     // echo "entering describe instances"
+                    
+                //     while state=`aws ec2 describe-instances --instance-ids \$instance_id --output text --query 'Reservations[*].Instances[*].State.Name'`; test "\$state" = "pending"; do
+                //       sleep 1; echo -n '.'
+                //     done; echo "\$state"
+                    
+                //     echo "\$state"
+                //     """
+            }
+        }
+        stage("Wait for EC2 Instance to Come Available") {
+            steps {
+                sh """ 
+                    echo "$env.instance_id"
                     
                     echo "entering describe instances"
                     
-                    while state=`aws ec2 describe-instances --instance-ids \$instance_id --output text --query 'Reservations[*].Instances[*].State.Name'`; test "\$state" = "pending"; do
+                    while state=`aws ec2 describe-instances --instance-ids $env.instance_id --output text --query 'Reservations[*].Instances[*].State.Name'`; test "\$state" = "pending"; do
                       sleep 1; echo -n '.'
                     done; echo "\$state"
                     
                     echo "\$state"
                     """
             }
+
         }
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh 'echo "\$instance_id"'
+                echo "$env.instance_id"
             }
         }
         stage('Deploy') {
