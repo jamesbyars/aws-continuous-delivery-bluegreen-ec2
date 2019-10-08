@@ -20,6 +20,9 @@ pipeline {
             steps {
                 echo 'Building..'
                 // sh 'aws s3 ls'
+
+                sh "echo '' > instance_id.txt"
+                sh "echo '' > ip_address.txt"
             }
         }
         stage('Provision new EC2 Instance') {
@@ -45,7 +48,6 @@ pipeline {
                     
                     ip_address=`aws ec2 describe-instances --instance-ids ${instance_id} --output text --query 'Reservations[*].Instances[*].PublicIpAddress'`
                     echo "\$ip_address" > ip_address.txt
-
                     """
             }
         }
