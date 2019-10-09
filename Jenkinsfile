@@ -62,12 +62,6 @@ pipeline {
                 sh "nc -z -w30 ${ip_address} 22"
                 echo "Result from nc (should be 0)"
                 sh "echo \$?"
-
-                // Port 8080 should be open
-                sh "nc -z -w30 ${ip_address} 8080"
-                echo "Result from nc (should be 0)"
-                sh "echo \$?"
-                
             }
         }
         stage('Test') {
