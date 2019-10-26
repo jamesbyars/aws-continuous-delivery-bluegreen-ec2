@@ -70,7 +70,7 @@ pipeline {
         stage('Test') {
 
             input {
-                message "Do a manual review of the app at ${ip_address}"
+                message "Do a manual review of the app"
                 ok "Go to PROD!"    
             }
 
