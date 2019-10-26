@@ -53,7 +53,7 @@ pipeline {
         }
         stage('Smoke test instance configs') {
             options {
-                retry(2)
+                retry(3)
             }
             steps {
                 script {
@@ -62,7 +62,7 @@ pipeline {
                 }
 
                 // Port 22 should be open
-                sh "nc -z -w60 ${ip_address} 22"
+                sh "nc -z -w20 ${ip_address} 22"
                 echo "Result from nc (should be 0)"
                 sh "echo \$?"
             }
