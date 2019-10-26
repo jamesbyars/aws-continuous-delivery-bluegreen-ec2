@@ -53,7 +53,7 @@ pipeline {
         }
         stage('Smoke test instance configs') {
             options {
-                retry(2)
+                retry(1)
             }
             steps {
                 script {
@@ -81,6 +81,31 @@ pipeline {
             steps {
                 echo 'Deploying....'
             }
+        }
+    }
+    post {
+        always {
+            echo 'One way or another, I have finished'
+            // deleteDir() /* clean up our workspace */
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+
+            script {
+                instance_id = readFile('instance_id.txt').trim()
+            }
+
+            sh "aws ec2 terminate-instances --instance-ids ${instance_id}"
+
+        }
+        changed {
+            echo 'Things were different before...'
         }
     }
 }
