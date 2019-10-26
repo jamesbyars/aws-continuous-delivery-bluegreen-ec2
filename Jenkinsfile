@@ -75,6 +75,12 @@ pipeline {
                 
                 echo "${instance_id}"
                 echo "${ip_address}"
+
+                input {
+                    message "Do a manual review of the app at ${ip_address}"
+                    ok "Go to PROD!"
+                    
+                }
             }
         }
         stage('Deploy') {
