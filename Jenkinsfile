@@ -53,7 +53,7 @@ pipeline {
         }
         stage('Smoke test instance configs') {
             options {
-                retry(1)
+                retry(2)
             }
             steps {
                 script {
