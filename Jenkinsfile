@@ -52,6 +52,9 @@ pipeline {
             }
         }
         stage('Smoke test instance configs') {
+            options {
+                retry(1)
+            }
             steps {
                 script {
                     instance_id = readFile('instance_id.txt').trim()
